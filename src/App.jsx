@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './App.css'
 
 const services = [
@@ -38,29 +38,47 @@ const services = [
       </svg>
     ),
   },
-  {
-    title: 'Gestión contable',
-    text: 'Soporte contable, impositivo y administrativo para personas y empresas que requieren orden, previsión y respaldo.',
-    icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M5 3h14v18H5z" />
-        <path d="M8 7h8" />
-        <path d="M8 11h2" />
-        <path d="M12 11h4" />
-        <path d="M8 15h2" />
-        <path d="M12 15h4" />
-      </svg>
-    ),
-  },
 ]
 
 const values = [
-  ['Trayectoria', 'Más de 20 años de experiencia sostienen una práctica orientada a resultados serios y verificables.'],
+  ['Trayectoria', 'Más de 27 años de experiencia sostienen una práctica orientada a resultados serios y verificables.'],
   ['Atención directa', 'Cada consulta recibe análisis personalizado, comunicación clara y seguimiento profesional.'],
-  ['Criterio integral', 'Unificamos mirada jurídica, notarial y contable para resolver con mayor profundidad.'],
+  ['Criterio integral', 'Unificamos mirada jurídica y notarial para resolver cada asunto con mayor profundidad.'],
+]
+
+const processSteps = [
+  {
+    eyebrow: 'Primer paso',
+    title: 'Evaluación profesional',
+    subtitle: 'Jurídico · Notarial',
+    chips: ['Consulta inicial', 'Análisis del caso', 'Próximos pasos'],
+    cta: 'Iniciar por WhatsApp',
+  },
+  {
+    eyebrow: 'Segundo paso',
+    title: 'Definición de estrategia',
+    subtitle: 'Asesoramiento personalizado',
+    chips: ['Alternativas', 'Enfoque legal', 'Documentación'],
+    cta: 'Hablar con un profesional',
+  },
+  {
+    eyebrow: 'Tercer paso',
+    title: 'Seguimiento claro',
+    subtitle: 'Atención cercana',
+    chips: ['Acompañamiento', 'Comunicación', 'Resolución'],
+    cta: 'Escribinos ahora',
+  },
 ]
 
 function App() {
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [activeService, setActiveService] = useState(0)
+  const [activeValue, setActiveValue] = useState(0)
+  const [activeProcessStep, setActiveProcessStep] = useState(0)
+  const servicesCarouselRef = useRef(null)
+  const valuesCarouselRef = useRef(null)
+
   useEffect(() => {
     const elements = document.querySelectorAll('.reveal')
 
@@ -81,25 +99,133 @@ function App() {
     return () => observer.disconnect()
   }, [])
 
+  useEffect(() => {
+    const updateHeader = () => {
+      setIsScrolled(window.scrollY > 24)
+    }
+
+    updateHeader()
+    window.addEventListener('scroll', updateHeader, { passive: true })
+
+    return () => window.removeEventListener('scroll', updateHeader)
+  }, [])
+
+  useEffect(() => {
+    const carousel = servicesCarouselRef.current
+    const mediaQuery = window.matchMedia('(max-width: 640px)')
+
+    if (!carousel || !mediaQuery.matches) return undefined
+
+    const interval = window.setInterval(() => {
+      const nextIndex = (activeService + 1) % services.length
+      const nextCard = carousel.children[nextIndex]
+
+      if (nextCard) {
+        carousel.scrollTo({
+          left: nextCard.offsetLeft - carousel.children[0].offsetLeft,
+          behavior: 'smooth',
+        })
+      }
+    }, 4200)
+
+    return () => window.clearInterval(interval)
+  }, [activeService])
+
+  useEffect(() => {
+    const carousel = valuesCarouselRef.current
+    const mediaQuery = window.matchMedia('(max-width: 640px)')
+
+    if (!carousel || !mediaQuery.matches) return undefined
+
+    const interval = window.setInterval(() => {
+      const nextIndex = (activeValue + 1) % values.length
+      const nextCard = carousel.children[nextIndex]
+
+      if (nextCard) {
+        carousel.scrollTo({
+          left: nextCard.offsetLeft - carousel.children[0].offsetLeft,
+          behavior: 'smooth',
+        })
+      }
+    }, 2000)
+
+    return () => window.clearInterval(interval)
+  }, [activeValue])
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setActiveProcessStep((step) => (step + 1) % processSteps.length)
+    }, 3000)
+
+    return () => window.clearInterval(interval)
+  }, [])
+
+  const handleServicesScroll = () => {
+    const carousel = servicesCarouselRef.current
+    if (!carousel) return
+
+    const cardWidth = carousel.firstElementChild?.getBoundingClientRect().width || 1
+    const gap = 12
+    const nextIndex = Math.round(carousel.scrollLeft / (cardWidth + gap))
+
+    setActiveService(Math.max(0, Math.min(services.length - 1, nextIndex)))
+  }
+
+  const handleValuesScroll = () => {
+    const carousel = valuesCarouselRef.current
+    if (!carousel) return
+
+    const cardWidth = carousel.firstElementChild?.getBoundingClientRect().width || 1
+    const gap = 12
+    const nextIndex = Math.round(carousel.scrollLeft / (cardWidth + gap))
+
+    setActiveValue(Math.max(0, Math.min(values.length - 1, nextIndex)))
+  }
+
+  const closeMenu = () => setIsMenuOpen(false)
+  const currentProcessStep = processSteps[activeProcessStep]
+
   return (
     <div className="landing">
-      <header className="header">
+      <header className={`header ${isScrolled ? 'is-scrolled' : ''}`}>
         <div className="container header-inner">
-          <a href="#" className="brand" aria-label="Legal Studio inicio">
-            <span className="brand-mark">LS</span>
+          <a href="#" className="brand" aria-label="Centro de Asesoramiento inicio" onClick={closeMenu}>
+            <span className="brand-mark">CA</span>
             <span>
-              <strong>Legal Studio</strong>
-              <small>Jurídico · Notarial · Contable</small>
+              <strong>Centro de Asesoramiento</strong>
+              <small>Jurídico · Notarial</small>
             </span>
           </a>
-          <nav className="nav" aria-label="Navegación principal">
-            <a href="#servicios">Servicios</a>
-            <a href="#equipo">Equipo</a>
-            <a href="#contacto">Contacto</a>
-            <a href="#contacto" className="nav-cta">Solicitar consulta</a>
+          <button
+            className="menu-toggle"
+            type="button"
+            aria-label={isMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+            aria-expanded={isMenuOpen}
+            aria-controls="main-navigation"
+            onClick={() => setIsMenuOpen((open) => !open)}
+          >
+            <span />
+            <span />
+          </button>
+          <nav
+            id="main-navigation"
+            className={`nav ${isMenuOpen ? 'is-open' : ''}`}
+            aria-label="Navegación principal"
+          >
+            <a href="#servicios" onClick={closeMenu}>Servicios</a>
+            <a href="#equipo" onClick={closeMenu}>Equipo</a>
+            <a href="#contacto" onClick={closeMenu}>Contacto</a>
+            <a href="#contacto" className="nav-cta" onClick={closeMenu}>Solicitar consulta</a>
           </nav>
         </div>
       </header>
+      <button
+        className={`menu-overlay ${isMenuOpen ? 'is-open' : ''}`}
+        type="button"
+        aria-label="Cerrar menú"
+        tabIndex={isMenuOpen ? 0 : -1}
+        onClick={closeMenu}
+      />
 
       <main>
         <section className="hero">
@@ -108,32 +234,78 @@ function App() {
               <span className="eyebrow">Centro de asesoramiento profesional</span>
               <h1>Respaldo jurídico serio para decisiones importantes.</h1>
               <p className="hero-subtitle">
-                Estudio jurídico, notarial y contable con más de 20 años de trayectoria.
+                Más de 27 años de asesoramiento jurídico, notarial y profesional.
               </p>
               <p className="hero-description">
-                Brindamos asesoramiento claro, reservado y estratégico para personas,
-                familias y empresas que necesitan defender sus intereses con seguridad.
+                Atención clara, reservada y estratégica para avanzar con seguridad.
               </p>
               <div className="hero-actions">
                 <a href="#contacto" className="btn btn-primary">Solicitar consulta</a>
                 <a href="#servicios" className="btn btn-secondary">Ver servicios</a>
               </div>
+              <div className="mobile-hero-visual">
+                <div className="visual-document">
+                  <span />
+                  <span />
+                  <span />
+                </div>
+                <div className="visual-seal">CA</div>
+                <div className="visual-content" key={currentProcessStep.title}>
+                  <small>{currentProcessStep.eyebrow}</small>
+                  <strong>{currentProcessStep.title}</strong>
+                  <span>{currentProcessStep.subtitle}</span>
+                  <div className="visual-chips">
+                    {currentProcessStep.chips.map((chip) => (
+                      <em key={chip}>{chip}</em>
+                    ))}
+                  </div>
+                  <a href="https://wa.me/59800000000">{currentProcessStep.cta}</a>
+                </div>
+                <div className="visual-dots" aria-hidden="true">
+                  {processSteps.map((step, index) => (
+                    <span
+                      className={index === activeProcessStep ? 'is-active' : ''}
+                      key={step.eyebrow}
+                    />
+                  ))}
+                </div>
+              </div>
             </div>
 
             <aside className="hero-panel reveal is-visible" aria-label="Resumen del estudio">
-              <div className="panel-line" />
               <p className="panel-kicker">Atención profesional</p>
               <h2>Soluciones legales con análisis integral.</h2>
               <dl>
                 <div>
-                  <dt>20+</dt>
+                  <span className="metric-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M12 3l7 4v5c0 4.8-2.9 7.6-7 9-4.1-1.4-7-4.2-7-9V7z" />
+                      <path d="M9 12l2 2 4-5" />
+                    </svg>
+                  </span>
+                  <dt>27+</dt>
                   <dd>años de experiencia</dd>
                 </div>
                 <div>
+                  <span className="metric-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M4 7h16" />
+                      <path d="M4 12h16" />
+                      <path d="M4 17h16" />
+                      <path d="M8 4v16" />
+                      <path d="M16 4v16" />
+                    </svg>
+                  </span>
                   <dt>3</dt>
                   <dd>áreas coordinadas</dd>
                 </div>
                 <div>
+                  <span className="metric-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z" />
+                      <path d="M4 21a8 8 0 0 1 16 0" />
+                    </svg>
+                  </span>
                   <dt>1:1</dt>
                   <dd>seguimiento personalizado</dd>
                 </div>
@@ -152,14 +324,27 @@ function App() {
                 estrategia ajustada al caso concreto.
               </p>
             </div>
-            <div className="services-grid">
+            <div
+              className="services-grid"
+              ref={servicesCarouselRef}
+              onScroll={handleServicesScroll}
+            >
               {services.map((service) => (
                 <article className="service-card reveal" key={service.title}>
                   <div className="service-icon">{service.icon}</div>
-                  <h3>{service.title}</h3>
-                  <p>{service.text}</p>
-                  <a href="#contacto">Consultar área</a>
+                  <div className="service-copy">
+                    <h3>{service.title}</h3>
+                    <p>{service.text}</p>
+                  </div>
                 </article>
+              ))}
+            </div>
+            <div className="service-dots" aria-hidden="true">
+              {services.map((service, index) => (
+                <span
+                  className={index === activeService ? 'is-active' : ''}
+                  key={service.title}
+                />
               ))}
             </div>
           </div>
@@ -172,19 +357,29 @@ function App() {
               <h2>Una práctica cercana, discreta y técnicamente sólida.</h2>
               <p>
                 Profesionales con vocación de servicio y experiencia en asuntos
-                jurídicos, notariales y contables de distinta complejidad.
+                jurídicos y notariales de distinta complejidad.
               </p>
+              <figure className="team-mobile-image">
+                <img
+                  src="/legal-office-mobile.jpg"
+                  alt="Espacio profesional del estudio jurídico"
+                  loading="lazy"
+                />
+              </figure>
             </div>
             <div className="team-list reveal">
               <article>
+                <span className="team-marker" aria-hidden="true">FS</span>
                 <h3>Dr. Fernando Salvatierra</h3>
                 <p>Abogado</p>
               </article>
               <article>
+                <span className="team-marker" aria-hidden="true">VC</span>
                 <h3>Dra. Verónica Cardozo</h3>
                 <p>Abogada</p>
               </article>
               <article>
+                <span className="team-marker" aria-hidden="true">NC</span>
                 <h3>Esc. Natalia Cabrera Villagra</h3>
                 <p>Escribana</p>
               </article>
@@ -193,28 +388,50 @@ function App() {
         </section>
 
         <section className="section values">
-          <div className="container values-grid">
-            {values.map(([title, text]) => (
-              <article className="value-card reveal" key={title}>
-                <span>{title}</span>
-                <p>{text}</p>
-              </article>
-            ))}
+          <div className="container">
+            <div
+              className="values-grid"
+              ref={valuesCarouselRef}
+              onScroll={handleValuesScroll}
+            >
+              {values.map(([title, text]) => (
+                <article className="value-card reveal" key={title}>
+                  <span>{title}</span>
+                  <p>{text}</p>
+                </article>
+              ))}
+            </div>
+            <div className="value-dots" aria-hidden="true">
+              {values.map(([title], index) => (
+                <span
+                  className={index === activeValue ? 'is-active' : ''}
+                  key={title}
+                />
+              ))}
+            </div>
           </div>
         </section>
 
         <section id="contacto" className="cta reveal">
           <div className="container cta-inner">
             <span className="eyebrow">Consulta inicial</span>
-            <h2>Conversemos sobre su caso con la reserva que requiere.</h2>
+            <h2>Reciba asesoramiento claro para avanzar con seguridad.</h2>
             <p>
-              Coordine una consulta para evaluar alternativas, próximos pasos y
-              documentación necesaria.
+              Escribinos para evaluar alternativas, próximos pasos y documentación
+              necesaria con atención profesional y personalizada.
             </p>
-            <div className="cta-actions">
-              <a href="tel:+595" className="btn btn-primary">Llamar ahora</a>
-              <a href="mailto:info@legalstudio.com" className="btn btn-secondary">Enviar email</a>
-            </div>
+            <a
+              href="https://wa.me/59800000000"
+              className="btn btn-primary whatsapp-btn"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12.04 3.5a8.5 8.5 0 0 0-7.2 13.02L3.9 20.5l4.08-1.04A8.5 8.5 0 1 0 12.04 3.5z" />
+                <path d="M8.95 8.55c.18-.4.36-.42.53-.42h.45c.14 0 .35.05.53.39.18.34.62 1.48.68 1.59.05.12.09.25.02.4-.08.16-.12.25-.24.39-.12.14-.25.31-.36.42-.12.12-.24.25-.1.49.14.24.62 1.02 1.34 1.65.92.82 1.7 1.07 1.94 1.19.24.12.38.1.52-.06.14-.16.6-.7.76-.94.16-.24.32-.2.54-.12.22.08 1.4.66 1.64.78.24.12.4.18.46.28.06.1.06.58-.14 1.14-.2.56-1.16 1.08-1.62 1.12-.42.04-.96.06-1.55-.1-.36-.1-.82-.26-1.41-.52-2.48-1.07-4.1-3.57-4.23-3.74-.12-.16-1.01-1.34-1.01-2.56s.64-1.82.86-2.07c.22-.25.48-.31.64-.31z" />
+              </svg>
+              Escribinos ahora por WhatsApp
+            </a>
           </div>
         </section>
       </main>
@@ -222,25 +439,69 @@ function App() {
       <footer className="footer">
         <div className="container footer-content">
           <div>
-            <h2>Legal Studio</h2>
-            <p>Estudio jurídico, notarial y contable con atención personalizada.</p>
+            <h2>Centro de Asesoramiento</h2>
+            <p>Centro jurídico y notarial con atención personalizada.</p>
           </div>
           <div>
             <h3>Contacto</h3>
-            <p>info@legalstudio.com</p>
-            <p>+595 XXX XXX XXX</p>
-            <p>Asunción, Paraguay</p>
+            <p>
+              <span className="footer-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M4 6h16v12H4z" />
+                  <path d="m4 7 8 6 8-6" />
+                </svg>
+              </span>
+              info@legalstudio.com
+            </p>
+            <p>
+              <span className="footer-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.7 19.7 0 0 1-8.6-3.1 19.2 19.2 0 0 1-5.9-5.9A19.7 19.7 0 0 1 2.2 4.2 2 2 0 0 1 4.2 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.4 2.1L8.1 9.7a16 16 0 0 0 6.2 6.2l1.3-1.3a2 2 0 0 1 2.1-.4c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2.1z" />
+                </svg>
+              </span>
+              +598 XXX XXX XXX
+            </p>
+            <p>
+              <span className="footer-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 21s7-4.8 7-11a7 7 0 1 0-14 0c0 6.2 7 11 7 11z" />
+                  <circle cx="12" cy="10" r="2.4" />
+                </svg>
+              </span>
+              Paysandú, Uruguay
+            </p>
           </div>
           <div>
             <h3>Horario</h3>
-            <p>Lunes a viernes</p>
+            <p>
+              <span className="footer-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="8" />
+                  <path d="M12 8v4l3 2" />
+                </svg>
+              </span>
+              Lunes a viernes
+            </p>
             <p>8:00 a 18:00</p>
           </div>
         </div>
         <div className="container footer-bottom">
-          <p>&copy; 2026 Legal Studio. Todos los derechos reservados.</p>
+          <p>&copy; 2026 Centro de Asesoramiento. Todos los derechos reservados.</p>
         </div>
       </footer>
+
+      <a
+        href="https://wa.me/59800000000"
+        className="mobile-whatsapp-bar"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12.04 3.5a8.5 8.5 0 0 0-7.2 13.02L3.9 20.5l4.08-1.04A8.5 8.5 0 1 0 12.04 3.5z" />
+          <path d="M8.95 8.55c.18-.4.36-.42.53-.42h.45c.14 0 .35.05.53.39.18.34.62 1.48.68 1.59.05.12.09.25.02.4-.08.16-.12.25-.24.39-.12.14-.25.31-.36.42-.12.12-.24.25-.1.49.14.24.62 1.02 1.34 1.65.92.82 1.7 1.07 1.94 1.19.24.12.38.1.52-.06.14-.16.6-.7.76-.94.16-.24.32-.2.54-.12.22.08 1.4.66 1.64.78.24.12.4.18.46.28.06.1.06.58-.14 1.14-.2.56-1.16 1.08-1.62 1.12-.42.04-.96.06-1.55-.1-.36-.1-.82-.26-1.41-.52-2.48-1.07-4.1-3.57-4.23-3.74-.12-.16-1.01-1.34-1.01-2.56s.64-1.82.86-2.07c.22-.25.48-.31.64-.31z" />
+        </svg>
+        Escribinos por WhatsApp
+      </a>
     </div>
   )
 }
