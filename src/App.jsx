@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import whatsappLogo from './assets/LOGO WSP.svg'
 import './App.css'
 
 const services = [
@@ -231,13 +232,10 @@ function App() {
         <section className="hero">
           <div className="container hero-grid">
             <div className="hero-content reveal is-visible">
-              <span className="eyebrow">Centro de asesoramiento profesional</span>
-              <h1>Respaldo jurídico serio para decisiones importantes.</h1>
+              <span className="eyebrow">Asesoramiento profesional</span>
+              <h1>Respaldo legal para decidir con seguridad.</h1>
               <p className="hero-subtitle">
-                Más de 27 años de asesoramiento jurídico, notarial y profesional.
-              </p>
-              <p className="hero-description">
-                Atención clara, reservada y estratégica para avanzar con seguridad.
+                Asesoramiento jurídico y notarial claro, estratégico y personalizado.
               </p>
               <div className="hero-actions">
                 <a href="#contacto" className="btn btn-primary">Solicitar consulta</a>
@@ -259,7 +257,10 @@ function App() {
                       <em key={chip}>{chip}</em>
                     ))}
                   </div>
-                  <a href="https://wa.me/59800000000">{currentProcessStep.cta}</a>
+                  <a href="https://wa.me/59800000000">
+                    <img className="whatsapp-logo" src={whatsappLogo} alt="" aria-hidden="true" />
+                    {currentProcessStep.cta}
+                  </a>
                 </div>
                 <div className="visual-dots" aria-hidden="true">
                   {processSteps.map((step, index) => (
@@ -274,7 +275,7 @@ function App() {
 
             <aside className="hero-panel reveal is-visible" aria-label="Resumen del estudio">
               <p className="panel-kicker">Atención profesional</p>
-              <h2>Soluciones legales con análisis integral.</h2>
+              <h2>Soluciones claras para casos importantes.</h2>
               <dl>
                 <div>
                   <span className="metric-icon" aria-hidden="true">
@@ -426,10 +427,7 @@ function App() {
               target="_blank"
               rel="noreferrer"
             >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12.04 3.5a8.5 8.5 0 0 0-7.2 13.02L3.9 20.5l4.08-1.04A8.5 8.5 0 1 0 12.04 3.5z" />
-                <path d="M8.95 8.55c.18-.4.36-.42.53-.42h.45c.14 0 .35.05.53.39.18.34.62 1.48.68 1.59.05.12.09.25.02.4-.08.16-.12.25-.24.39-.12.14-.25.31-.36.42-.12.12-.24.25-.1.49.14.24.62 1.02 1.34 1.65.92.82 1.7 1.07 1.94 1.19.24.12.38.1.52-.06.14-.16.6-.7.76-.94.16-.24.32-.2.54-.12.22.08 1.4.66 1.64.78.24.12.4.18.46.28.06.1.06.58-.14 1.14-.2.56-1.16 1.08-1.62 1.12-.42.04-.96.06-1.55-.1-.36-.1-.82-.26-1.41-.52-2.48-1.07-4.1-3.57-4.23-3.74-.12-.16-1.01-1.34-1.01-2.56s.64-1.82.86-2.07c.22-.25.48-.31.64-.31z" />
-              </svg>
+              <img className="whatsapp-logo" src={whatsappLogo} alt="" aria-hidden="true" />
               Escribinos ahora por WhatsApp
             </a>
           </div>
@@ -496,10 +494,7 @@ function App() {
         target="_blank"
         rel="noreferrer"
       >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12.04 3.5a8.5 8.5 0 0 0-7.2 13.02L3.9 20.5l4.08-1.04A8.5 8.5 0 1 0 12.04 3.5z" />
-          <path d="M8.95 8.55c.18-.4.36-.42.53-.42h.45c.14 0 .35.05.53.39.18.34.62 1.48.68 1.59.05.12.09.25.02.4-.08.16-.12.25-.24.39-.12.14-.25.31-.36.42-.12.12-.24.25-.1.49.14.24.62 1.02 1.34 1.65.92.82 1.7 1.07 1.94 1.19.24.12.38.1.52-.06.14-.16.6-.7.76-.94.16-.24.32-.2.54-.12.22.08 1.4.66 1.64.78.24.12.4.18.46.28.06.1.06.58-.14 1.14-.2.56-1.16 1.08-1.62 1.12-.42.04-.96.06-1.55-.1-.36-.1-.82-.26-1.41-.52-2.48-1.07-4.1-3.57-4.23-3.74-.12-.16-1.01-1.34-1.01-2.56s.64-1.82.86-2.07c.22-.25.48-.31.64-.31z" />
-        </svg>
+        <img className="whatsapp-logo" src={whatsappLogo} alt="" aria-hidden="true" />
         Escribinos por WhatsApp
       </a>
     </div>
