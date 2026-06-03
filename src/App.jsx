@@ -77,6 +77,8 @@ function App() {
   const [activeService, setActiveService] = useState(0)
   const [activeValue, setActiveValue] = useState(0)
   const [activeProcessStep, setActiveProcessStep] = useState(0)
+  const heroRef = useRef(null)
+  const ctaRef = useRef(null)
   const servicesCarouselRef = useRef(null)
   const valuesCarouselRef = useRef(null)
 
@@ -161,6 +163,47 @@ function App() {
     return () => window.clearInterval(interval)
   }, [])
 
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    if (mediaQuery.matches) return undefined
+
+    const parallaxSections = [
+      [heroRef.current, '--hero-bg-shift'],
+      [ctaRef.current, '--cta-bg-shift'],
+    ].filter(([element]) => element)
+
+    if (!parallaxSections.length) return undefined
+
+    let frameId = 0
+
+    const updateBackgroundShift = () => {
+      frameId = 0
+      const viewportCenter = window.innerHeight / 2
+
+      parallaxSections.forEach(([element, property]) => {
+        const rect = element.getBoundingClientRect()
+        const sectionCenter = rect.top + rect.height / 2
+        const shift = Math.max(-28, Math.min(28, (viewportCenter - sectionCenter) * 0.035))
+
+        element.style.setProperty(property, `${shift.toFixed(2)}px`)
+      })
+    }
+
+    const requestUpdate = () => {
+      if (!frameId) frameId = window.requestAnimationFrame(updateBackgroundShift)
+    }
+
+    updateBackgroundShift()
+    window.addEventListener('scroll', requestUpdate, { passive: true })
+    window.addEventListener('resize', requestUpdate)
+
+    return () => {
+      if (frameId) window.cancelAnimationFrame(frameId)
+      window.removeEventListener('scroll', requestUpdate)
+      window.removeEventListener('resize', requestUpdate)
+    }
+  }, [])
+
   const handleServicesScroll = () => {
     const carousel = servicesCarouselRef.current
     if (!carousel) return
@@ -229,7 +272,8 @@ function App() {
       />
 
       <main>
-        <section className="hero">
+        <section className="hero" ref={heroRef}>
+          <span className="photo-motion-bg" aria-hidden="true" />
           <div className="container hero-grid">
             <div className="hero-content reveal is-visible">
               <span className="eyebrow">Asesoramiento profesional</span>
@@ -257,7 +301,7 @@ function App() {
                       <em key={chip}>{chip}</em>
                     ))}
                   </div>
-                  <a href="https://wa.me/59800000000">
+                  <a href="https://wa.me/59896832925">
                     <img className="whatsapp-logo" src={whatsappLogo} alt="" aria-hidden="true" />
                     {currentProcessStep.cta}
                   </a>
@@ -375,9 +419,9 @@ function App() {
                 <p>Abogado</p>
               </article>
               <article>
-                <span className="team-marker" aria-hidden="true">VC</span>
-                <h3>Dra. Verónica Cardozo</h3>
-                <p>Abogada</p>
+                <span className="team-marker" aria-hidden="true">GB</span>
+                <h3>Gonzalo Bentancort Choca</h3>
+                <p>Abogado</p>
               </article>
               <article>
                 <span className="team-marker" aria-hidden="true">NC</span>
@@ -413,7 +457,8 @@ function App() {
           </div>
         </section>
 
-        <section id="contacto" className="cta reveal">
+        <section id="contacto" className="cta reveal" ref={ctaRef}>
+          <span className="photo-motion-bg" aria-hidden="true" />
           <div className="container cta-inner">
             <span className="eyebrow">Consulta inicial</span>
             <h2>Reciba asesoramiento claro para avanzar con seguridad.</h2>
@@ -422,7 +467,7 @@ function App() {
               necesaria con atención profesional y personalizada.
             </p>
             <a
-              href="https://wa.me/59800000000"
+              href="https://wa.me/59896832925"
               className="btn btn-primary whatsapp-btn"
               target="_blank"
               rel="noreferrer"
@@ -449,7 +494,7 @@ function App() {
                   <path d="m4 7 8 6 8-6" />
                 </svg>
               </span>
-              info@legalstudio.com
+              contacto@centrodeasesoramiento.com
             </p>
             <p>
               <span className="footer-icon" aria-hidden="true">
@@ -457,7 +502,15 @@ function App() {
                   <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.7 19.7 0 0 1-8.6-3.1 19.2 19.2 0 0 1-5.9-5.9A19.7 19.7 0 0 1 2.2 4.2 2 2 0 0 1 4.2 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.4 2.1L8.1 9.7a16 16 0 0 0 6.2 6.2l1.3-1.3a2 2 0 0 1 2.1-.4c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2.1z" />
                 </svg>
               </span>
-              +598 XXX XXX XXX
+              096 832 925
+            </p>
+            <p>
+              <span className="footer-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.7 19.7 0 0 1-8.6-3.1 19.2 19.2 0 0 1-5.9-5.9A19.7 19.7 0 0 1 2.2 4.2 2 2 0 0 1 4.2 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.4 2.1L8.1 9.7a16 16 0 0 0 6.2 6.2l1.3-1.3a2 2 0 0 1 2.1-.4c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2.1z" />
+                </svg>
+              </span>
+              4722 0024
             </p>
             <p>
               <span className="footer-icon" aria-hidden="true">
@@ -466,7 +519,7 @@ function App() {
                   <circle cx="12" cy="10" r="2.4" />
                 </svg>
               </span>
-              Paysandú, Uruguay
+              18 de Julio 1169, Departamento de Paysandú
             </p>
           </div>
           <div>
@@ -489,7 +542,7 @@ function App() {
       </footer>
 
       <a
-        href="https://wa.me/59800000000"
+        href="https://wa.me/59896832925"
         className="mobile-whatsapp-bar"
         target="_blank"
         rel="noreferrer"
