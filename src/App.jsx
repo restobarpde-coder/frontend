@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
+import caLogo from './assets/LOGO CA - PAYSANDÚ.webp'
+import caLogoWhite from './assets/LOGO CA - PAYSANDÚ - BLANCO.webp'
 import whatsappLogo from './assets/LOGO WSP.svg'
 import './App.css'
 
@@ -191,11 +193,7 @@ function App() {
       <header className={`header ${isScrolled ? 'is-scrolled' : ''}`}>
         <div className="container header-inner">
           <a href="#" className="brand" aria-label="Centro de Asesoramiento inicio" onClick={closeMenu}>
-            <span className="brand-mark">CA</span>
-            <span>
-              <strong>Centro de Asesoramiento</strong>
-              <small>Jurídico · Notarial</small>
-            </span>
+            <img className="brand-logo" src={caLogo} alt="Centro de Asesoramiento" />
           </a>
           <button
             className="menu-toggle"
@@ -257,7 +255,7 @@ function App() {
                       <em key={chip}>{chip}</em>
                     ))}
                   </div>
-                  <a href="https://wa.me/59800000000">
+                  <a href="https://wa.me/59896832925">
                     <img className="whatsapp-logo" src={whatsappLogo} alt="" aria-hidden="true" />
                     {currentProcessStep.cta}
                   </a>
@@ -375,9 +373,9 @@ function App() {
                 <p>Abogado</p>
               </article>
               <article>
-                <span className="team-marker" aria-hidden="true">VC</span>
-                <h3>Dra. Verónica Cardozo</h3>
-                <p>Abogada</p>
+                <span className="team-marker" aria-hidden="true">GB</span>
+                <h3>Gonzalo Bentancort Choca</h3>
+                <p>Abogado</p>
               </article>
               <article>
                 <span className="team-marker" aria-hidden="true">NC</span>
@@ -415,21 +413,23 @@ function App() {
 
         <section id="contacto" className="cta reveal">
           <div className="container cta-inner">
-            <span className="eyebrow">Consulta inicial</span>
-            <h2>Reciba asesoramiento claro para avanzar con seguridad.</h2>
-            <p>
-              Escribinos para evaluar alternativas, próximos pasos y documentación
-              necesaria con atención profesional y personalizada.
-            </p>
-            <a
-              href="https://wa.me/59800000000"
-              className="btn btn-primary whatsapp-btn"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <img className="whatsapp-logo" src={whatsappLogo} alt="" aria-hidden="true" />
-              Escribinos ahora por WhatsApp
-            </a>
+            <div className="cta-copy">
+              <span className="eyebrow">Consulta inicial</span>
+              <h2>Recibí asesoramiento claro para avanzar con seguridad.</h2>
+              <p>
+                Escribinos para evaluar tu situación, entender qué documentación
+                necesitás y definir los próximos pasos con acompañamiento profesional.
+              </p>
+              <a
+                href="https://wa.me/59896832925"
+                className="btn btn-primary whatsapp-btn"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img className="whatsapp-logo" src={whatsappLogo} alt="" aria-hidden="true" />
+                Escribinos por WhatsApp
+              </a>
+            </div>
           </div>
         </section>
       </main>
@@ -437,8 +437,7 @@ function App() {
       <footer className="footer">
         <div className="container footer-content">
           <div>
-            <h2>Centro de Asesoramiento</h2>
-            <p>Centro jurídico y notarial con atención personalizada.</p>
+            <img className="footer-logo" src={caLogoWhite} alt="Centro de Asesoramiento" />
           </div>
           <div>
             <h3>Contacto</h3>
@@ -449,7 +448,7 @@ function App() {
                   <path d="m4 7 8 6 8-6" />
                 </svg>
               </span>
-              info@legalstudio.com
+              contacto@centrodeasesoramiento.com
             </p>
             <p>
               <span className="footer-icon" aria-hidden="true">
@@ -457,7 +456,7 @@ function App() {
                   <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.7 19.7 0 0 1-8.6-3.1 19.2 19.2 0 0 1-5.9-5.9A19.7 19.7 0 0 1 2.2 4.2 2 2 0 0 1 4.2 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.4 2.1L8.1 9.7a16 16 0 0 0 6.2 6.2l1.3-1.3a2 2 0 0 1 2.1-.4c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2.1z" />
                 </svg>
               </span>
-              +598 XXX XXX XXX
+              +598 96 832 925
             </p>
             <p>
               <span className="footer-icon" aria-hidden="true">
@@ -466,7 +465,7 @@ function App() {
                   <circle cx="12" cy="10" r="2.4" />
                 </svg>
               </span>
-              Paysandú, Uruguay
+              18 de Julio 1169 - Paysandú
             </p>
           </div>
           <div>
@@ -489,7 +488,7 @@ function App() {
       </footer>
 
       <a
-        href="https://wa.me/59800000000"
+        href="https://wa.me/59896832925"
         className="mobile-whatsapp-bar"
         target="_blank"
         rel="noreferrer"
