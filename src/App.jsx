@@ -1,8 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
+import gsap from 'gsap'
+import { useGSAP } from '@gsap/react'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import caLogo from './assets/LOGO CA - PAYSANDÚ.webp'
 import caLogoWhite from './assets/LOGO CA - PAYSANDÚ - BLANCO.webp'
 import whatsappLogo from './assets/LOGO WSP.svg'
 import './App.css'
+
+gsap.registerPlugin(useGSAP, ScrollTrigger)
 
 const services = [
   {
@@ -79,28 +84,107 @@ function App() {
   const [activeService, setActiveService] = useState(0)
   const [activeValue, setActiveValue] = useState(0)
   const [activeProcessStep, setActiveProcessStep] = useState(0)
+
   const servicesCarouselRef = useRef(null)
   const valuesCarouselRef = useRef(null)
 
-  useEffect(() => {
-    const elements = document.querySelectorAll('.reveal')
+  // GSAP refs
+  const landingRef = useRef(null)
+  const heroEyebrowRef = useRef(null)
+  const heroH1Ref = useRef(null)
+  const heroSubtitleRef = useRef(null)
+  const heroActionsRef = useRef(null)
+  const heroPanelRef = useRef(null)
+  const counter27Ref = useRef(null)
+  const counter3Ref = useRef(null)
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible')
-            observer.unobserve(entry.target)
-          }
-        })
+  useGSAP(() => {
+    // === HERO: stagger fade+slideUp on mount ===
+    const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+    heroTl
+      .from(heroEyebrowRef.current, { autoAlpha: 0, y: 20, duration: 0.55 })
+      .from(heroH1Ref.current,      { autoAlpha: 0, y: 28, duration: 0.65 }, '-=0.35')
+      .from(heroSubtitleRef.current, { autoAlpha: 0, y: 20, duration: 0.55 }, '-=0.35')
+      .from(heroActionsRef.current, { autoAlpha: 0, y: 16, duration: 0.50 }, '-=0.30')
+      .from(heroPanelRef.current,   { autoAlpha: 0, x: 32, duration: 0.70 }, '-=0.50')
+
+    // === HERO PANEL: animated counters (fire on load, slight delay) ===
+    const obj27 = { val: 0 }
+    gsap.to(obj27, {
+      val: 27,
+      duration: 2,
+      delay: 0.8,
+      ease: 'power2.out',
+      onUpdate() {
+        if (counter27Ref.current) counter27Ref.current.textContent = Math.round(obj27.val) + '+'
       },
-      { threshold: 0.16 },
-    )
+    })
 
-    elements.forEach((element) => observer.observe(element))
+    const obj3 = { val: 0 }
+    gsap.to(obj3, {
+      val: 3,
+      duration: 1.4,
+      delay: 1,
+      ease: 'power2.out',
+      onUpdate() {
+        if (counter3Ref.current) counter3Ref.current.textContent = Math.round(obj3.val)
+      },
+    })
 
-    return () => observer.disconnect()
-  }, [])
+    // === SERVICES: heading fade-up, cards stagger ===
+    gsap.from('.services .section-heading', {
+      autoAlpha: 0,
+      y: 36,
+      duration: 0.7,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: '.services .section-heading', start: 'top 82%' },
+    })
+
+    gsap.from('.service-card', {
+      autoAlpha: 0,
+      y: 36,
+      duration: 0.6,
+      stagger: 0.15,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: '.services-grid', start: 'top 82%' },
+    })
+
+    // === TEAM: copy from left, list from right ===
+    gsap.from('.team .section-heading', {
+      autoAlpha: 0,
+      x: -40,
+      duration: 0.7,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: '.team .split-section', start: 'top 80%' },
+    })
+
+    gsap.from('.team-list', {
+      autoAlpha: 0,
+      x: 40,
+      duration: 0.7,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: '.team .split-section', start: 'top 80%' },
+    })
+
+    // === VALUES: batch fade-up ===
+    gsap.from('.value-card', {
+      autoAlpha: 0,
+      y: 28,
+      duration: 0.6,
+      stagger: 0.12,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: '.values-grid', start: 'top 82%' },
+    })
+
+    // === CTA: fade + scale-in ===
+    gsap.from('#contacto.cta', {
+      autoAlpha: 0,
+      scale: 0.97,
+      duration: 0.7,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: '#contacto', start: 'top 80%' },
+    })
+  }, { scope: landingRef })
 
   useEffect(() => {
     const updateHeader = () => {
@@ -189,7 +273,7 @@ function App() {
   const currentProcessStep = processSteps[activeProcessStep]
 
   return (
-    <div className="landing">
+    <div className="landing" ref={landingRef}>
       <header className={`header ${isScrolled ? 'is-scrolled' : ''}`}>
         <div className="container header-inner">
           <a href="#" className="brand" aria-label="Centro de Asesoramiento inicio" onClick={closeMenu}>
@@ -229,13 +313,13 @@ function App() {
       <main>
         <section className="hero">
           <div className="container hero-grid">
-            <div className="hero-content reveal is-visible">
-              <span className="eyebrow">Asesoramiento profesional</span>
-              <h1>Respaldo legal para decidir con seguridad.</h1>
-              <p className="hero-subtitle">
+            <div className="hero-content">
+              <span className="eyebrow" ref={heroEyebrowRef}>Asesoramiento profesional</span>
+              <h1 ref={heroH1Ref}>Respaldo legal para decidir con seguridad.</h1>
+              <p className="hero-subtitle" ref={heroSubtitleRef}>
                 Asesoramiento jurídico y notarial claro, estratégico y personalizado.
               </p>
-              <div className="hero-actions">
+              <div className="hero-actions" ref={heroActionsRef}>
                 <a href="#contacto" className="btn btn-primary">Solicitar consulta</a>
                 <a href="#servicios" className="btn btn-secondary">Ver servicios</a>
               </div>
@@ -271,7 +355,7 @@ function App() {
               </div>
             </div>
 
-            <aside className="hero-panel reveal is-visible" aria-label="Resumen del estudio">
+            <aside className="hero-panel" ref={heroPanelRef} aria-label="Resumen del estudio">
               <p className="panel-kicker">Atención profesional</p>
               <h2>Soluciones claras para casos importantes.</h2>
               <dl>
@@ -282,7 +366,7 @@ function App() {
                       <path d="M9 12l2 2 4-5" />
                     </svg>
                   </span>
-                  <dt>27+</dt>
+                  <dt ref={counter27Ref}>0+</dt>
                   <dd>años de experiencia</dd>
                 </div>
                 <div>
@@ -295,7 +379,7 @@ function App() {
                       <path d="M16 4v16" />
                     </svg>
                   </span>
-                  <dt>3</dt>
+                  <dt ref={counter3Ref}>0</dt>
                   <dd>áreas coordinadas</dd>
                 </div>
                 <div>
@@ -315,7 +399,7 @@ function App() {
 
         <section id="servicios" className="section services">
           <div className="container">
-            <div className="section-heading reveal">
+            <div className="section-heading">
               <span className="eyebrow">Nuestros servicios</span>
               <h2>Asesoramiento ordenado, preciso y confiable.</h2>
               <p>
@@ -329,7 +413,7 @@ function App() {
               onScroll={handleServicesScroll}
             >
               {services.map((service) => (
-                <article className="service-card reveal" key={service.title}>
+                <article className="service-card" key={service.title}>
                   <div className="service-icon">{service.icon}</div>
                   <div className="service-copy">
                     <h3>{service.title}</h3>
@@ -351,7 +435,7 @@ function App() {
 
         <section id="equipo" className="section team">
           <div className="container split-section">
-            <div className="section-heading align-left reveal">
+            <div className="section-heading align-left">
               <span className="eyebrow">Equipo profesional</span>
               <h2>Una práctica cercana, discreta y técnicamente sólida.</h2>
               <p>
@@ -366,7 +450,7 @@ function App() {
                 />
               </figure>
             </div>
-            <div className="team-list reveal">
+            <div className="team-list">
               <article>
                 <span className="team-marker" aria-hidden="true">FS</span>
                 <h3>Dr. Fernando Salvatierra</h3>
@@ -374,7 +458,7 @@ function App() {
               </article>
               <article>
                 <span className="team-marker" aria-hidden="true">GB</span>
-                <h3>Gonzalo Bentancort Choca</h3>
+                <h3>Gonzalo Bentancor Choca</h3>
                 <p>Abogado</p>
               </article>
               <article>
@@ -394,7 +478,7 @@ function App() {
               onScroll={handleValuesScroll}
             >
               {values.map(([title, text]) => (
-                <article className="value-card reveal" key={title}>
+                <article className="value-card" key={title}>
                   <span>{title}</span>
                   <p>{text}</p>
                 </article>
@@ -411,7 +495,7 @@ function App() {
           </div>
         </section>
 
-        <section id="contacto" className="cta reveal">
+        <section id="contacto" className="cta">
           <div className="container cta-inner">
             <div className="cta-copy">
               <span className="eyebrow">Consulta inicial</span>
