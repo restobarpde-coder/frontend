@@ -166,24 +166,22 @@ function App() {
       scrollTrigger: { trigger: '.team .split-section', start: 'top 80%' },
     })
 
-    // === VALUES: batch fade-up ===
-    gsap.from('.value-card', {
+    // === VALUES: fade-up the section wrapper (cards are in a scroll container — avoid y-transform inside it) ===
+    gsap.from('.values', {
       autoAlpha: 0,
-      y: 28,
-      duration: 0.6,
-      stagger: 0.12,
+      y: 24,
+      duration: 0.65,
       ease: 'power3.out',
-      scrollTrigger: { trigger: '.values-grid', start: 'top 82%' },
+      scrollTrigger: { trigger: '.values', start: 'top 85%' },
     })
 
-    // === CTA: fade + scale-in ===
-    gsap.from('#contacto.cta', {
-      autoAlpha: 0,
-      scale: 0.97,
-      duration: 0.7,
-      ease: 'power3.out',
+    // === CTA: fade + scale-in, then stagger children ===
+    const ctaTl = gsap.timeline({
       scrollTrigger: { trigger: '#contacto', start: 'top 80%' },
     })
+    ctaTl
+      .from('#contacto.cta', { autoAlpha: 0, scale: 0.97, duration: 0.6, ease: 'power3.out' })
+      .from('#contacto .cta-copy > *', { autoAlpha: 0, y: 18, duration: 0.55, stagger: 0.12, ease: 'power3.out' }, '-=0.3')
   }, { scope: landingRef })
 
   useEffect(() => {
