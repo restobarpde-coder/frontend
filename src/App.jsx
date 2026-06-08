@@ -561,7 +561,10 @@ function App() {
               </span>
               Lunes a viernes
             </p>
-            <p>8:00 a 18:00</p>
+            <p>9:00 a 12:00 y 15:00 a 18:00 hs</p>
+            <p style={{ marginTop: '0.5rem', fontSize: '0.85em', fontStyle: 'italic' }}>
+              Para su mejor atención, agende su consulta.
+            </p>
           </div>
         </div>
         <div className="container footer-bottom">
