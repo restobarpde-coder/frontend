@@ -451,7 +451,7 @@ function App() {
             <div className="team-list">
               <article>
                 <span className="team-marker" aria-hidden="true">FS</span>
-                <h3>Dr. Fernando Salvatierra</h3>
+                <h3>Dr. Fernando Salvatierra Daglio</h3>
                 <p>Abogado</p>
               </article>
               <article>
@@ -547,7 +547,7 @@ function App() {
                   <circle cx="12" cy="10" r="2.4" />
                 </svg>
               </span>
-              18 de Julio 1169 - Paysandú
+              18 de Julio 1169 - Paysandú - Apto 101
             </p>
           </div>
           <div>
