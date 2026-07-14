@@ -1,6 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
+import gsap from 'gsap'
+import { useGSAP } from '@gsap/react'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import caLogo from './assets/LOGO CA - PAYSANDÚ.webp'
+import caLogoWhite from './assets/LOGO CA - PAYSANDÚ - BLANCO.webp'
 import whatsappLogo from './assets/LOGO WSP.svg'
 import './App.css'
+
+gsap.registerPlugin(useGSAP, ScrollTrigger)
 
 const services = [
   {
@@ -82,25 +89,101 @@ function App() {
   const servicesCarouselRef = useRef(null)
   const valuesCarouselRef = useRef(null)
 
-  useEffect(() => {
-    const elements = document.querySelectorAll('.reveal')
+  // GSAP refs
+  const landingRef = useRef(null)
+  const heroEyebrowRef = useRef(null)
+  const heroH1Ref = useRef(null)
+  const heroSubtitleRef = useRef(null)
+  const heroActionsRef = useRef(null)
+  const heroPanelRef = useRef(null)
+  const counter27Ref = useRef(null)
+  const counter3Ref = useRef(null)
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible')
-            observer.unobserve(entry.target)
-          }
-        })
+  useGSAP(() => {
+    // === HERO: stagger fade+slideUp on mount ===
+    const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+    heroTl
+      .from(heroEyebrowRef.current, { autoAlpha: 0, y: 20, duration: 0.55 })
+      .from(heroH1Ref.current,      { autoAlpha: 0, y: 28, duration: 0.65 }, '-=0.35')
+      .from(heroSubtitleRef.current, { autoAlpha: 0, y: 20, duration: 0.55 }, '-=0.35')
+      .from(heroActionsRef.current, { autoAlpha: 0, y: 16, duration: 0.50 }, '-=0.30')
+      .from(heroPanelRef.current,   { autoAlpha: 0, x: 32, duration: 0.70 }, '-=0.50')
+
+    // === HERO PANEL: animated counters (fire on load, slight delay) ===
+    const obj27 = { val: 0 }
+    gsap.to(obj27, {
+      val: 27,
+      duration: 2,
+      delay: 0.8,
+      ease: 'power2.out',
+      onUpdate() {
+        if (counter27Ref.current) counter27Ref.current.textContent = Math.round(obj27.val) + '+'
       },
-      { threshold: 0.16 },
-    )
+    })
 
-    elements.forEach((element) => observer.observe(element))
+    const obj3 = { val: 0 }
+    gsap.to(obj3, {
+      val: 3,
+      duration: 1.4,
+      delay: 1,
+      ease: 'power2.out',
+      onUpdate() {
+        if (counter3Ref.current) counter3Ref.current.textContent = Math.round(obj3.val)
+      },
+    })
 
-    return () => observer.disconnect()
-  }, [])
+    // === SERVICES: heading fade-up, cards stagger ===
+    gsap.from('.services .section-heading', {
+      autoAlpha: 0,
+      y: 36,
+      duration: 0.7,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: '.services .section-heading', start: 'top 82%' },
+    })
+
+    gsap.from('.service-card', {
+      autoAlpha: 0,
+      y: 36,
+      duration: 0.6,
+      stagger: 0.15,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: '.services-grid', start: 'top 82%' },
+    })
+
+    // === TEAM: copy from left, list from right ===
+    gsap.from('.team .section-heading', {
+      autoAlpha: 0,
+      x: -40,
+      duration: 0.7,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: '.team .split-section', start: 'top 80%' },
+    })
+
+    gsap.from('.team-list', {
+      autoAlpha: 0,
+      x: 40,
+      duration: 0.7,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: '.team .split-section', start: 'top 80%' },
+    })
+
+    // === VALUES: fade-up the section wrapper (cards are in a scroll container — avoid y-transform inside it) ===
+    gsap.from('.values', {
+      autoAlpha: 0,
+      y: 24,
+      duration: 0.65,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: '.values', start: 'top 85%' },
+    })
+
+    // === CTA: fade + scale-in, then stagger children ===
+    const ctaTl = gsap.timeline({
+      scrollTrigger: { trigger: '#contacto', start: 'top 80%' },
+    })
+    ctaTl
+      .from('#contacto.cta', { autoAlpha: 0, scale: 0.97, duration: 0.6, ease: 'power3.out' })
+      .from('#contacto .cta-copy > *', { autoAlpha: 0, y: 18, duration: 0.55, stagger: 0.12, ease: 'power3.out' }, '-=0.3')
+  }, { scope: landingRef })
 
   useEffect(() => {
     const updateHeader = () => {
@@ -230,15 +313,11 @@ function App() {
   const currentProcessStep = processSteps[activeProcessStep]
 
   return (
-    <div className="landing">
+    <div className="landing" ref={landingRef}>
       <header className={`header ${isScrolled ? 'is-scrolled' : ''}`}>
         <div className="container header-inner">
           <a href="#" className="brand" aria-label="Centro de Asesoramiento inicio" onClick={closeMenu}>
-            <span className="brand-mark">CA</span>
-            <span>
-              <strong>Centro de Asesoramiento</strong>
-              <small>Jurídico · Notarial</small>
-            </span>
+            <img className="brand-logo" src={caLogo} alt="Centro de Asesoramiento" />
           </a>
           <button
             className="menu-toggle"
@@ -275,13 +354,13 @@ function App() {
         <section className="hero" ref={heroRef}>
           <span className="photo-motion-bg" aria-hidden="true" />
           <div className="container hero-grid">
-            <div className="hero-content reveal is-visible">
-              <span className="eyebrow">Asesoramiento profesional</span>
-              <h1>Respaldo legal para decidir con seguridad.</h1>
-              <p className="hero-subtitle">
+            <div className="hero-content">
+              <span className="eyebrow" ref={heroEyebrowRef}>Asesoramiento profesional</span>
+              <h1 ref={heroH1Ref}>Respaldo legal para decidir con seguridad.</h1>
+              <p className="hero-subtitle" ref={heroSubtitleRef}>
                 Asesoramiento jurídico y notarial claro, estratégico y personalizado.
               </p>
-              <div className="hero-actions">
+              <div className="hero-actions" ref={heroActionsRef}>
                 <a href="#contacto" className="btn btn-primary">Solicitar consulta</a>
                 <a href="#servicios" className="btn btn-secondary">Ver servicios</a>
               </div>
@@ -317,7 +396,7 @@ function App() {
               </div>
             </div>
 
-            <aside className="hero-panel reveal is-visible" aria-label="Resumen del estudio">
+            <aside className="hero-panel" ref={heroPanelRef} aria-label="Resumen del estudio">
               <p className="panel-kicker">Atención profesional</p>
               <h2>Soluciones claras para casos importantes.</h2>
               <dl>
@@ -328,7 +407,7 @@ function App() {
                       <path d="M9 12l2 2 4-5" />
                     </svg>
                   </span>
-                  <dt>27+</dt>
+                  <dt ref={counter27Ref}>0+</dt>
                   <dd>años de experiencia</dd>
                 </div>
                 <div>
@@ -341,7 +420,7 @@ function App() {
                       <path d="M16 4v16" />
                     </svg>
                   </span>
-                  <dt>3</dt>
+                  <dt ref={counter3Ref}>0</dt>
                   <dd>áreas coordinadas</dd>
                 </div>
                 <div>
@@ -361,7 +440,7 @@ function App() {
 
         <section id="servicios" className="section services">
           <div className="container">
-            <div className="section-heading reveal">
+            <div className="section-heading">
               <span className="eyebrow">Nuestros servicios</span>
               <h2>Asesoramiento ordenado, preciso y confiable.</h2>
               <p>
@@ -375,7 +454,7 @@ function App() {
               onScroll={handleServicesScroll}
             >
               {services.map((service) => (
-                <article className="service-card reveal" key={service.title}>
+                <article className="service-card" key={service.title}>
                   <div className="service-icon">{service.icon}</div>
                   <div className="service-copy">
                     <h3>{service.title}</h3>
@@ -397,7 +476,7 @@ function App() {
 
         <section id="equipo" className="section team">
           <div className="container split-section">
-            <div className="section-heading align-left reveal">
+            <div className="section-heading align-left">
               <span className="eyebrow">Equipo profesional</span>
               <h2>Una práctica cercana, discreta y técnicamente sólida.</h2>
               <p>
@@ -412,15 +491,15 @@ function App() {
                 />
               </figure>
             </div>
-            <div className="team-list reveal">
+            <div className="team-list">
               <article>
                 <span className="team-marker" aria-hidden="true">FS</span>
-                <h3>Dr. Fernando Salvatierra</h3>
+                <h3>Dr. Fernando Salvatierra Daglio</h3>
                 <p>Abogado</p>
               </article>
               <article>
                 <span className="team-marker" aria-hidden="true">GB</span>
-                <h3>Gonzalo Bentancort Choca</h3>
+                <h3>Gonzalo Bentancor Choca</h3>
                 <p>Abogado</p>
               </article>
               <article>
@@ -440,7 +519,7 @@ function App() {
               onScroll={handleValuesScroll}
             >
               {values.map(([title, text]) => (
-                <article className="value-card reveal" key={title}>
+                <article className="value-card" key={title}>
                   <span>{title}</span>
                   <p>{text}</p>
                 </article>
@@ -457,24 +536,26 @@ function App() {
           </div>
         </section>
 
-        <section id="contacto" className="cta reveal" ref={ctaRef}>
+        <section id="contacto" className="cta" ref={ctaRef}>
           <span className="photo-motion-bg" aria-hidden="true" />
           <div className="container cta-inner">
-            <span className="eyebrow">Consulta inicial</span>
-            <h2>Reciba asesoramiento claro para avanzar con seguridad.</h2>
-            <p>
-              Escribinos para evaluar alternativas, próximos pasos y documentación
-              necesaria con atención profesional y personalizada.
-            </p>
-            <a
-              href="https://wa.me/59896832925"
-              className="btn btn-primary whatsapp-btn"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <img className="whatsapp-logo" src={whatsappLogo} alt="" aria-hidden="true" />
-              Escribinos ahora por WhatsApp
-            </a>
+            <div className="cta-copy">
+              <span className="eyebrow">Consulta inicial</span>
+              <h2>Recibí asesoramiento claro para avanzar con seguridad.</h2>
+              <p>
+                Escribinos para evaluar tu situación, entender qué documentación
+                necesitás y definir los próximos pasos con acompañamiento profesional.
+              </p>
+              <a
+                href="https://wa.me/59896832925"
+                className="btn btn-primary whatsapp-btn"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img className="whatsapp-logo" src={whatsappLogo} alt="" aria-hidden="true" />
+                Escribinos por WhatsApp
+              </a>
+            </div>
           </div>
         </section>
       </main>
@@ -482,8 +563,7 @@ function App() {
       <footer className="footer">
         <div className="container footer-content">
           <div>
-            <h2>Centro de Asesoramiento</h2>
-            <p>Centro jurídico y notarial con atención personalizada.</p>
+            <img className="footer-logo" src={caLogoWhite} alt="Centro de Asesoramiento" />
           </div>
           <div>
             <h3>Contacto</h3>
@@ -502,15 +582,7 @@ function App() {
                   <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.7 19.7 0 0 1-8.6-3.1 19.2 19.2 0 0 1-5.9-5.9A19.7 19.7 0 0 1 2.2 4.2 2 2 0 0 1 4.2 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.4 2.1L8.1 9.7a16 16 0 0 0 6.2 6.2l1.3-1.3a2 2 0 0 1 2.1-.4c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2.1z" />
                 </svg>
               </span>
-              096 832 925
-            </p>
-            <p>
-              <span className="footer-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.7 19.7 0 0 1-8.6-3.1 19.2 19.2 0 0 1-5.9-5.9A19.7 19.7 0 0 1 2.2 4.2 2 2 0 0 1 4.2 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.4 2.1L8.1 9.7a16 16 0 0 0 6.2 6.2l1.3-1.3a2 2 0 0 1 2.1-.4c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2.1z" />
-                </svg>
-              </span>
-              4722 0024
+              +598 96 832 925
             </p>
             <p>
               <span className="footer-icon" aria-hidden="true">
@@ -519,7 +591,7 @@ function App() {
                   <circle cx="12" cy="10" r="2.4" />
                 </svg>
               </span>
-              18 de Julio 1169, Departamento de Paysandú
+              18 de Julio 1169 - Paysandú - Apto 101
             </p>
           </div>
           <div>
@@ -533,7 +605,10 @@ function App() {
               </span>
               Lunes a viernes
             </p>
-            <p>8:00 a 18:00</p>
+            <p>9:00 a 12:00 y 15:00 a 18:00 hs</p>
+            <p style={{ marginTop: '0.5rem', fontSize: '0.85em', fontStyle: 'italic' }}>
+              Para su mejor atención, agende su consulta.
+            </p>
           </div>
         </div>
         <div className="container footer-bottom">
