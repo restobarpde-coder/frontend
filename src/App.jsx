@@ -197,27 +197,6 @@ function App() {
   }, [])
 
   useEffect(() => {
-    const carousel = servicesCarouselRef.current
-    const mediaQuery = window.matchMedia('(max-width: 640px)')
-
-    if (!carousel || !mediaQuery.matches) return undefined
-
-    const interval = window.setInterval(() => {
-      const nextIndex = (activeService + 1) % services.length
-      const nextCard = carousel.children[nextIndex]
-
-      if (nextCard) {
-        carousel.scrollTo({
-          left: nextCard.offsetLeft - carousel.children[0].offsetLeft,
-          behavior: 'smooth',
-        })
-      }
-    }, 4200)
-
-    return () => window.clearInterval(interval)
-  }, [activeService])
-
-  useEffect(() => {
     const carousel = valuesCarouselRef.current
     const mediaQuery = window.matchMedia('(max-width: 640px)')
 
@@ -506,6 +485,12 @@ function App() {
                 <span className="team-marker" aria-hidden="true">NC</span>
                 <h3>Esc. Natalia Cabrera Villagra</h3>
                 <p>Escribana</p>
+              </article>
+              <span className="team-secondary-label">Área contable adjunta</span>
+              <article className="team-member-secondary">
+                <span className="team-marker" aria-hidden="true">ML</span>
+                <h3>Cr. María Luna Silva Henderson</h3>
+                <p>Contadora</p>
               </article>
             </div>
           </div>

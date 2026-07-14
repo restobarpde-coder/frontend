@@ -306,13 +306,6 @@
   color: #e3b7ad;
 }
 
-.eyebrow::before {
-  content: '';
-  width: 36px;
-  height: 1px;
-  background: currentColor;
-}
-
 .hero h1,
 .section-heading h2,
 .cta h2 {
@@ -324,7 +317,7 @@
   max-width: 660px;
   margin: 22px 0 24px;
   font-size: clamp(2.5rem, 3.45vw, 3.72rem);
-  line-height: 1.03;
+  line-height: 1.08;
   font-weight: 800;
 }
 
@@ -332,7 +325,7 @@
   max-width: 640px;
   color: #fff6ee;
   font-size: clamp(1.08rem, 1.45vw, 1.34rem);
-  line-height: 1.44;
+  line-height: 1.52;
   font-weight: 760;
 }
 
@@ -345,7 +338,7 @@
   margin: 12px 0 30px;
   color: rgba(255, 253, 249, 0.78);
   font-size: 1rem;
-  line-height: 1.36;
+  line-height: 1.5;
 }
 
 .hero-actions,
@@ -509,7 +502,7 @@
   margin: 12px 0 32px;
   font-family: var(--font-display);
   font-size: clamp(1.7rem, 2.7vw, 2.55rem);
-  line-height: 1.08;
+  line-height: 1.14;
   font-weight: 800;
 }
 
@@ -560,7 +553,7 @@
 .hero-panel dd {
   color: rgba(255, 253, 249, 0.76);
   font-weight: 650;
-  line-height: 1.25;
+  line-height: 1.38;
 }
 
 .section {
@@ -593,14 +586,14 @@
   margin: 14px 0 16px;
   color: var(--burgundy-950);
   font-size: clamp(2rem, 3.6vw, 3.45rem);
-  line-height: 1.08;
+  line-height: 1.12;
   font-weight: 800;
 }
 
 .section-heading p {
   color: var(--muted);
   font-size: 1.04rem;
-  line-height: 1.46;
+  line-height: 1.54;
 }
 
 .services-grid {
@@ -721,7 +714,7 @@
 .service-card h3 {
   color: var(--burgundy-950);
   font-size: 1.34rem;
-  line-height: 1.18;
+  line-height: 1.24;
   margin-bottom: 14px;
   max-width: 260px;
   text-align: center;
@@ -730,7 +723,7 @@
 .service-card p {
   color: var(--burgundy-800);
   font-size: 1rem;
-  line-height: 1.28;
+  line-height: 1.48;
   text-align: center;
 }
 
@@ -786,6 +779,7 @@
   color: var(--burgundy-950);
   font-family: var(--font-display);
   font-size: 1.45rem;
+  line-height: 1.24;
   font-weight: 800;
 }
 
@@ -793,6 +787,35 @@
   margin-top: 6px;
   color: var(--red-700);
   font-weight: 750;
+}
+
+.team-secondary-label {
+  display: block;
+  margin-top: 18px;
+  color: rgba(88, 20, 35, 0.58);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.team-list article.team-member-secondary {
+  margin-top: 7px;
+  padding: 18px 0;
+  border-top: 1px dashed rgba(88, 20, 35, 0.14);
+  border-bottom-color: rgba(88, 20, 35, 0.1);
+}
+
+.team-list .team-member-secondary h3 {
+  color: rgba(43, 7, 16, 0.76);
+  font-size: 1.12rem;
+  font-weight: 700;
+}
+
+.team-list .team-member-secondary p {
+  color: rgba(141, 31, 45, 0.72);
+  font-size: 0.9rem;
+  font-weight: 650;
 }
 
 .values-grid {
@@ -817,7 +840,7 @@
 .value-card p {
   margin-top: 8px;
   color: var(--muted);
-  line-height: 1.42;
+  line-height: 1.5;
 }
 
 .value-dots {
@@ -875,7 +898,7 @@
   max-width: 890px;
   margin: 18px 0 18px;
   font-size: clamp(2.8rem, 5vw, 5rem);
-  line-height: 0.98;
+  line-height: 1.08;
   text-wrap: balance;
 }
 
@@ -883,7 +906,7 @@
   max-width: 690px;
   color: rgba(255, 253, 249, 0.78);
   font-size: 1.06rem;
-  line-height: 1.42;
+  line-height: 1.54;
   margin-bottom: 34px;
 }
 
@@ -964,13 +987,13 @@
   max-width: 620px;
   margin: 18px 0 20px;
   font-size: clamp(2.54rem, 4.8vw, 4.72rem);
-  line-height: 1;
+  line-height: 1.08;
 }
 
 .cta p {
   max-width: 560px;
   font-size: 1.04rem;
-  line-height: 1.5;
+  line-height: 1.54;
   margin-bottom: 32px;
 }
 
@@ -1715,7 +1738,7 @@
   margin-top: 8px;
   color: rgba(255, 253, 249, 0.72);
   font-size: 0.9rem;
-  line-height: 1.36;
+  line-height: 1.48;
 }
 
 .footer-icon {
@@ -2259,14 +2282,14 @@
     max-width: 350px;
     margin: 12px auto;
     font-size: clamp(1.82rem, 8.2vw, 2.34rem);
-    line-height: 1;
+    line-height: 1.08;
   }
 
   .hero-subtitle {
     max-width: 330px;
     margin: 0 auto 12px;
     font-size: 0.96rem;
-    line-height: 1.24;
+    line-height: 1.46;
     font-weight: 700;
   }
 
@@ -2274,7 +2297,7 @@
     max-width: 315px;
     margin: 8px auto 18px;
     font-size: 0.86rem;
-    line-height: 1.32;
+    line-height: 1.48;
     display: none;
   }
 
@@ -2507,10 +2530,6 @@
     letter-spacing: 0.1em;
   }
 
-  .eyebrow::before {
-    width: 26px;
-  }
-
   .hero-panel h2 {
     margin: 10px 0 18px;
     font-size: 1.45rem;
@@ -2553,12 +2572,16 @@
   .section-heading h2 {
     margin: 10px 0;
     font-size: clamp(1.55rem, 7.2vw, 2.02rem);
-    line-height: 1.08;
+    line-height: 1.14;
   }
 
   .section-heading p {
     font-size: 0.9rem;
-    line-height: 1.42;
+    line-height: 1.52;
+  }
+
+  .services .section-heading {
+    margin-bottom: 2px;
   }
 
   .split-section {
@@ -2586,21 +2609,17 @@
     justify-content: center;
   }
 
-  .team .eyebrow::before {
-    display: none;
-  }
-
   .team .section-heading h2 {
     max-width: 330px;
     margin: 8px auto 9px;
     font-size: clamp(1.42rem, 6.5vw, 1.82rem);
-    line-height: 1.05;
+    line-height: 1.14;
   }
 
   .team .section-heading p {
     max-width: 320px;
     margin-inline: auto;
-    line-height: 1.4;
+    line-height: 1.52;
   }
 
   .team-mobile-image {
@@ -2650,11 +2669,12 @@
   .services-grid {
     display: flex;
     grid-template-columns: none;
+    align-items: stretch;
     gap: 12px;
     margin-inline: -12px;
-    padding: 18px 12px 22px;
+    padding: 4px 12px 36px;
     overflow-x: auto;
-    overflow-y: hidden;
+    overflow-y: visible;
     overscroll-behavior-x: contain;
     scroll-snap-type: x mandatory;
     scroll-padding-inline: 12px;
@@ -2668,15 +2688,17 @@
   }
 
   .service-card {
-    flex: 0 0 min(86vw, 342px);
-    min-height: auto;
+    flex: 0 0 100%;
+    height: auto;
+    min-height: 180px;
     display: grid;
     grid-template-columns: 58px 1fr;
     align-items: center;
     gap: 14px;
     padding: 16px;
     border-radius: 20px;
-    scroll-snap-align: center;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
     box-shadow: 0 14px 30px rgba(43, 7, 16, 0.08);
   }
 
@@ -2716,13 +2738,13 @@
     max-width: none;
     margin-bottom: 6px;
     font-size: 1rem;
-    line-height: 1.15;
+    line-height: 1.24;
     text-align: left;
   }
 
   .service-card p {
     font-size: 0.82rem;
-    line-height: 1.3;
+    line-height: 1.48;
     text-align: left;
   }
 
@@ -2812,7 +2834,7 @@
 
   .team-list h3 {
     font-size: 1.18rem;
-    line-height: 1.18;
+    line-height: 1.24;
     align-self: end;
   }
 
@@ -2820,6 +2842,23 @@
     margin-top: 4px;
     font-size: 0.92rem;
     align-self: start;
+  }
+
+  .team-list article.team-member-secondary {
+    margin-top: 7px;
+    padding: 12px 14px;
+    border-style: dashed;
+    background: rgba(255, 253, 249, 0.42);
+    box-shadow: none;
+  }
+
+  .team-secondary-label {
+    margin: 16px 14px 0;
+    font-size: 0.68rem;
+  }
+
+  .team-member-secondary .team-marker {
+    opacity: 0.68;
   }
 
   .value-card {
@@ -2843,14 +2882,14 @@
   .value-card span {
     color: var(--burgundy-950);
     font-size: 1.02rem;
-    line-height: 1.15;
+    line-height: 1.24;
   }
 
   .value-card p {
     margin-top: 7px;
     color: var(--burgundy-800);
     font-size: 0.86rem;
-    line-height: 1.38;
+    line-height: 1.5;
   }
 
   .value-card:active {
@@ -2895,14 +2934,14 @@
     max-width: 340px;
     margin: 10px auto;
     font-size: clamp(1.78rem, 8.2vw, 2.42rem);
-    line-height: 1;
+    line-height: 1.1;
   }
 
   .cta p {
     max-width: 320px;
     margin: 0 auto 22px;
     font-size: 0.88rem;
-    line-height: 1.3;
+    line-height: 1.5;
   }
 
   .whatsapp-btn {
@@ -3295,7 +3334,7 @@
     gap: 8px;
     margin-top: 4px;
     font-size: 0.78rem;
-    line-height: 1.28;
+    line-height: 1.46;
   }
 
   .footer-bottom {
