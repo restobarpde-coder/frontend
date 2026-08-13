@@ -949,10 +949,11 @@
   text-align: left;
 }
 
+/* Only resize the grid pattern here. `background-size`/`opacity` shorthands used
+   to apply to every layer, which flattened the scrim underneath the copy and let
+   the photo wash out the text. */
 .cta::before {
-  background-size: 92px 92px;
-  mask-image: linear-gradient(90deg, transparent, black 16%, black 78%, transparent);
-  opacity: 0.13;
+  background-size: auto, auto, 92px 92px, 92px 92px;
 }
 
 .cta::after {
@@ -2114,7 +2115,6 @@
 @media (max-width: 640px) {
   .landing {
     background: var(--paper);
-    padding-bottom: 74px;
   }
 
   .container {
@@ -2940,8 +2940,14 @@
   .cta p {
     max-width: 320px;
     margin: 0 auto 22px;
+    color: rgba(255, 253, 249, 0.92);
     font-size: 0.88rem;
     line-height: 1.5;
+    text-shadow: 0 1px 12px rgba(43, 7, 16, 0.55);
+  }
+
+  .cta h2 {
+    text-shadow: 0 2px 16px rgba(43, 7, 16, 0.45);
   }
 
   .whatsapp-btn {
@@ -2973,6 +2979,19 @@
       linear-gradient(145deg, #230610 0%, #3d0a18 58%, #19050b 100%),
       var(--burgundy-950);
     text-align: left;
+  }
+
+  /* The desktop scrim runs left-to-right because the copy sits in the left
+     column. Mobile copy is centred and full-width, so it needs an even scrim —
+     otherwise the right half of the photo bleeds through the text. */
+  .cta::before {
+    background:
+      linear-gradient(180deg, rgba(43, 7, 16, 0.9), rgba(43, 7, 16, 0.84) 46%, rgba(43, 7, 16, 0.92)),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(0deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: auto, 92px 92px, 92px 92px;
+    mask-image: none;
+    opacity: 1;
   }
 
   .cta-inner {
@@ -3286,8 +3305,10 @@
     align-self: center;
   }
 
+  /* Room for the fixed WhatsApp bar is reserved inside the footer, so the strip
+     behind it stays dark instead of showing a bare band of page background. */
   .footer {
-    padding: 16px 0 12px;
+    padding: 16px 0 calc(12px + 74px);
     box-shadow: 0 -20px 38px rgba(18, 13, 13, 0.28);
   }
 
@@ -3387,12 +3408,23 @@
     box-shadow: 0 18px 42px rgba(43, 7, 16, 0.28);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    transition: transform 260ms var(--ease), box-shadow 260ms var(--ease);
+    transition:
+      transform 320ms var(--ease),
+      opacity 260ms var(--ease),
+      box-shadow 260ms var(--ease);
   }
 
   .mobile-whatsapp-bar:active {
     transform: translateY(1px) scale(0.99);
     box-shadow: 0 12px 28px rgba(43, 7, 16, 0.24);
+  }
+
+  /* Retracts over the CTA, which already shows the same button — so the bar
+     never sits on top of it. */
+  .mobile-whatsapp-bar.is-hidden {
+    transform: translateY(calc(100% + 16px));
+    opacity: 0;
+    pointer-events: none;
   }
 
   .mobile-whatsapp-bar .whatsapp-logo {

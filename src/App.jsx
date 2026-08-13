@@ -84,10 +84,15 @@ function App() {
   const [activeService, setActiveService] = useState(0)
   const [activeValue, setActiveValue] = useState(0)
   const [activeProcessStep, setActiveProcessStep] = useState(0)
+  const [valuesPaused, setValuesPaused] = useState(false)
+  const [valuesInView, setValuesInView] = useState(false)
+  const [processPaused, setProcessPaused] = useState(false)
+  const [isCtaInView, setIsCtaInView] = useState(false)
   const heroRef = useRef(null)
   const ctaRef = useRef(null)
   const servicesCarouselRef = useRef(null)
   const valuesCarouselRef = useRef(null)
+  const heroVisualRef = useRef(null)
 
   // GSAP refs
   const landingRef = useRef(null)
@@ -100,16 +105,10 @@ function App() {
   const counter3Ref = useRef(null)
 
   useGSAP(() => {
-    // === HERO: stagger fade+slideUp on mount ===
-    const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } })
-    heroTl
-      .from(heroEyebrowRef.current, { autoAlpha: 0, y: 20, duration: 0.55 })
-      .from(heroH1Ref.current,      { autoAlpha: 0, y: 28, duration: 0.65 }, '-=0.35')
-      .from(heroSubtitleRef.current, { autoAlpha: 0, y: 20, duration: 0.55 }, '-=0.35')
-      .from(heroActionsRef.current, { autoAlpha: 0, y: 16, duration: 0.50 }, '-=0.30')
-      .from(heroPanelRef.current,   { autoAlpha: 0, x: 32, duration: 0.70 }, '-=0.50')
+    const mm = gsap.matchMedia()
 
     // === HERO PANEL: animated counters (fire on load, slight delay) ===
+    // Not scroll-gated: the numbers must be readable even if nothing animates.
     const obj27 = { val: 0 }
     gsap.to(obj27, {
       val: 27,
@@ -132,57 +131,90 @@ function App() {
       },
     })
 
-    // === SERVICES: heading fade-up, cards stagger ===
-    gsap.from('.services .section-heading', {
-      autoAlpha: 0,
-      y: 36,
-      duration: 0.7,
-      ease: 'power3.out',
-      scrollTrigger: { trigger: '.services .section-heading', start: 'top 82%' },
+    // === HERO: stagger fade+slideUp on mount ===
+    // Above the fold, so it always plays to completion — never gated by scroll.
+    mm.add(
+      {
+        isMobile: '(max-width: 640px)',
+        reduceMotion: '(prefers-reduced-motion: reduce)',
+      },
+      (ctx) => {
+        const { isMobile, reduceMotion } = ctx.conditions
+        if (reduceMotion) return
+
+        gsap
+          .timeline({ defaults: { ease: 'power3.out' } })
+          .from(heroEyebrowRef.current,  { autoAlpha: 0, y: 20, duration: 0.55 })
+          .from(heroH1Ref.current,       { autoAlpha: 0, y: 28, duration: 0.65 }, '-=0.35')
+          .from(heroSubtitleRef.current, { autoAlpha: 0, y: 20, duration: 0.55 }, '-=0.35')
+          .from(heroActionsRef.current,  { autoAlpha: 0, y: 16, duration: 0.50 }, '-=0.30')
+          .from(heroPanelRef.current, {
+            autoAlpha: 0,
+            // On mobile the panel is stacked full-width — slide it up, not sideways.
+            ...(isMobile ? { y: 24 } : { x: 32 }),
+            duration: 0.70,
+          }, '-=0.50')
+      },
+    )
+
+    // === SCROLL REVEALS: desktop only ===
+    // These hide their targets until the trigger fires. On phones that reads as
+    // missing content (fast flick scrolling, deep links, restored scroll
+    // positions), so mobile renders everything up front instead.
+    mm.add('(min-width: 641px) and (prefers-reduced-motion: no-preference)', () => {
+      // `once: true` guarantees a revealed section can never be hidden again.
+      const reveal = (targets, vars, trigger) =>
+        gsap.from(targets, {
+          ease: 'power3.out',
+          ...vars,
+          scrollTrigger: { start: 'top 85%', once: true, ...trigger },
+        })
+
+      // === SERVICES: heading fade-up, cards stagger ===
+      reveal('.services .section-heading', { autoAlpha: 0, y: 36, duration: 0.7 },
+        { trigger: '.services .section-heading' })
+
+      reveal('.service-card', { autoAlpha: 0, y: 36, duration: 0.6, stagger: 0.15 },
+        { trigger: '.services-grid' })
+
+      // === TEAM: copy from left, list from right ===
+      reveal('.team .section-heading', { autoAlpha: 0, x: -40, duration: 0.7 },
+        { trigger: '.team .split-section' })
+
+      reveal('.team-list', { autoAlpha: 0, x: 40, duration: 0.7 },
+        { trigger: '.team .split-section' })
+
+      // === VALUES: fade-up the section wrapper (cards are in a scroll container — avoid y-transform inside it) ===
+      reveal('.values', { autoAlpha: 0, y: 24, duration: 0.65 }, { trigger: '.values' })
+
+      // === CTA: fade + scale-in, then stagger children ===
+      const ctaTl = gsap.timeline({
+        scrollTrigger: { trigger: '#contacto', start: 'top 85%', once: true },
+      })
+      ctaTl
+        .from('#contacto.cta', { autoAlpha: 0, scale: 0.97, duration: 0.6, ease: 'power3.out' })
+        .from('#contacto .cta-copy > *', { autoAlpha: 0, y: 18, duration: 0.55, stagger: 0.12, ease: 'power3.out' }, '-=0.3')
     })
 
-    gsap.from('.service-card', {
-      autoAlpha: 0,
-      y: 36,
-      duration: 0.6,
-      stagger: 0.15,
-      ease: 'power3.out',
-      scrollTrigger: { trigger: '.services-grid', start: 'top 82%' },
-    })
+    // Triggers are measured before images/fonts settle; re-measure once the page
+    // is fully loaded so nothing is left stranded behind a stale start position.
+    const refresh = () => ScrollTrigger.refresh()
+    if (document.readyState === 'complete') refresh()
+    else window.addEventListener('load', refresh, { once: true })
 
-    // === TEAM: copy from left, list from right ===
-    gsap.from('.team .section-heading', {
-      autoAlpha: 0,
-      x: -40,
-      duration: 0.7,
-      ease: 'power3.out',
-      scrollTrigger: { trigger: '.team .split-section', start: 'top 80%' },
-    })
+    // Landing on a deep link (…/#contacto) must not leave the target hidden:
+    // refresh first, then jump, so the reveal for that section fires.
+    if (window.location.hash) {
+      const target = document.querySelector(window.location.hash)
+      if (target) {
+        requestAnimationFrame(() => {
+          ScrollTrigger.refresh()
+          target.scrollIntoView()
+        })
+      }
+    }
 
-    gsap.from('.team-list', {
-      autoAlpha: 0,
-      x: 40,
-      duration: 0.7,
-      ease: 'power3.out',
-      scrollTrigger: { trigger: '.team .split-section', start: 'top 80%' },
-    })
-
-    // === VALUES: fade-up the section wrapper (cards are in a scroll container — avoid y-transform inside it) ===
-    gsap.from('.values', {
-      autoAlpha: 0,
-      y: 24,
-      duration: 0.65,
-      ease: 'power3.out',
-      scrollTrigger: { trigger: '.values', start: 'top 85%' },
-    })
-
-    // === CTA: fade + scale-in, then stagger children ===
-    const ctaTl = gsap.timeline({
-      scrollTrigger: { trigger: '#contacto', start: 'top 80%' },
-    })
-    ctaTl
-      .from('#contacto.cta', { autoAlpha: 0, scale: 0.97, duration: 0.6, ease: 'power3.out' })
-      .from('#contacto .cta-copy > *', { autoAlpha: 0, y: 18, duration: 0.55, stagger: 0.12, ease: 'power3.out' }, '-=0.3')
+    return () => window.removeEventListener('load', refresh)
   }, { scope: landingRef })
 
   useEffect(() => {
@@ -196,11 +228,63 @@ function App() {
     return () => window.removeEventListener('scroll', updateHeader)
   }, [])
 
+  // A carousel that keeps sliding while you read is the same as hiding the text.
+  // Any touch on either one hands control back to the visitor for good.
+  useEffect(() => {
+    const targets = [
+      [valuesCarouselRef.current, setValuesPaused],
+      [heroVisualRef.current, setProcessPaused],
+    ].filter(([element]) => element)
+
+    const cleanups = targets.map(([element, pause]) => {
+      const stop = () => pause(true)
+      element.addEventListener('pointerdown', stop, { passive: true })
+      element.addEventListener('touchstart', stop, { passive: true })
+      return () => {
+        element.removeEventListener('pointerdown', stop)
+        element.removeEventListener('touchstart', stop)
+      }
+    })
+
+    return () => cleanups.forEach((cleanup) => cleanup())
+  }, [])
+
+  // The fixed bar permanently covers the bottom strip of every screen. Retract it
+  // while the CTA's own WhatsApp button is on screen so it never sits on top of it.
+  useEffect(() => {
+    const ctaButton = ctaRef.current?.querySelector('.whatsapp-btn')
+    if (!ctaButton) return undefined
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsCtaInView(entry.isIntersecting),
+      { threshold: 0.6 },
+    )
+    observer.observe(ctaButton)
+
+    return () => observer.disconnect()
+  }, [])
+
+  // Only rotate the values carousel while it is actually on screen.
   useEffect(() => {
     const carousel = valuesCarouselRef.current
-    const mediaQuery = window.matchMedia('(max-width: 640px)')
+    if (!carousel) return undefined
 
-    if (!carousel || !mediaQuery.matches) return undefined
+    const observer = new IntersectionObserver(
+      ([entry]) => setValuesInView(entry.isIntersecting),
+      { threshold: 0.5 },
+    )
+    observer.observe(carousel)
+
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const carousel = valuesCarouselRef.current
+    const isMobile = window.matchMedia('(max-width: 640px)').matches
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    if (!carousel || !isMobile || reduceMotion) return undefined
+    if (valuesPaused || !valuesInView) return undefined
 
     const interval = window.setInterval(() => {
       const nextIndex = (activeValue + 1) % values.length
@@ -212,18 +296,21 @@ function App() {
           behavior: 'smooth',
         })
       }
-    }, 2000)
+    }, 5000)
 
     return () => window.clearInterval(interval)
-  }, [activeValue])
+  }, [activeValue, valuesPaused, valuesInView])
 
   useEffect(() => {
+    if (processPaused) return undefined
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
+
     const interval = window.setInterval(() => {
       setActiveProcessStep((step) => (step + 1) % processSteps.length)
-    }, 3000)
+    }, 4500)
 
     return () => window.clearInterval(interval)
-  }, [])
+  }, [processPaused])
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -343,7 +430,7 @@ function App() {
                 <a href="#contacto" className="btn btn-primary">Solicitar consulta</a>
                 <a href="#servicios" className="btn btn-secondary">Ver servicios</a>
               </div>
-              <div className="mobile-hero-visual">
+              <div className="mobile-hero-visual" ref={heroVisualRef}>
                 <div className="visual-document">
                   <span />
                   <span />
@@ -603,9 +690,11 @@ function App() {
 
       <a
         href="https://wa.me/59896832925"
-        className="mobile-whatsapp-bar"
+        className={`mobile-whatsapp-bar ${isCtaInView ? 'is-hidden' : ''}`}
         target="_blank"
         rel="noreferrer"
+        aria-hidden={isCtaInView}
+        tabIndex={isCtaInView ? -1 : 0}
       >
         <img className="whatsapp-logo" src={whatsappLogo} alt="" aria-hidden="true" />
         Escribinos por WhatsApp
